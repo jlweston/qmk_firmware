@@ -14,7 +14,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include QMK_KEYBOARD_H
+#include "keymap.h"
+
+#define MODS_SHIFT  (get_mods() & MOD_BIT(KC_LSHIFT) || get_mods() & MOD_BIT(KC_RSHIFT))
+#define MODS_CTRL  (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTRL))
+#define MODS_ALT  (get_mods() & MOD_BIT(KC_LALT) || get_mods() & MOD_BIT(KC_RALT))
 
 enum alt_keycodes {
     U_T_AUTO = SAFE_RANGE, // USB Extra Port Toggle Auto Detect / Always Active
@@ -24,7 +28,7 @@ enum alt_keycodes {
     DBG_KBD,               // DEBUG Toggle Keyboard Prints
     DBG_MOU,               // DEBUG Toggle Mouse Prints
     MD_BOOT,               // Restart into bootloader after hold timeout
-    TH_L1,               // Tap/hold layer changing
+    TH_WM,                 // Toggle Windows and Mac base layer
 };
 
 // Layer declarations
@@ -64,8 +68,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,          KC_Q,    KC_W,            KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,            KC_LBRC,          KC_RBRC, KC_BSLS, KC_HOME, \
         KC_CAPS,         KC_A,    KC_S,            KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,         KC_QUOT,                   KC_ENT,  KC_PGUP, \
         LSFT_T(KC_LCBR), KC_Z,    KC_X,            KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,         RSFT_T(KC_RCBR),           KC_UP,   KC_PGDN, \
-        KC_LCTL,         KC_LGUI, LALT_T(KC_LPRN),                            KC_SPC,                             RALT_T(KC_RPRN), TH_L1,            KC_LEFT, KC_DOWN, KC_RGHT  \
-
+        KC_LCTL,         KC_LGUI, KC_LALT,                            KC_SPC,                            KC_RALT, TH_WM,           KC_LEFT, KC_DOWN, KC_RGHT  \
     ),
     /* Mac
      * ┌───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬────────────┬───────┐
@@ -91,14 +94,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * └─────────┴─────────┴─────────┴───────────────────────────────────────────────┴─────────┴─────────┴──┴───────┴───────┴───────┘
      */
     [_MAC] = LAYOUT_65_ansi_blocker(
-        GRAVE_ESC,       KC_1,           KC_2,     KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_MINS,          KC_EQL,  KC_BSPC, KC_DEL,  \
-        KC_TAB,          KC_Q,           KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,            KC_LBRC,          KC_RBRC, KC_BSLS, KC_HOME, \
-        KC_CAPS,         KC_A,           KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,         KC_QUOT,                   KC_ENT,  KC_PGUP, \
-        LSFT_T(KC_LCBR), KC_Z,           KC_X,     KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,         RSFT_T(KC_RCBR),           KC_UP,   KC_PGDN, \
-        KC_LCTL,         LALT_T(KC_LPRN),KC_LGUI,                             KC_SPC,                             RALT_T(KC_RPRN), TH_L1,            KC_LEFT, KC_DOWN, KC_RGHT  \
-
+        GRAVE_ESC,       KC_1,          KC_2,     KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_MINS,          KC_EQL,  KC_BSPC, KC_DEL,  \
+        KC_TAB,          KC_Q,          KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,            KC_LBRC,          KC_RBRC, KC_BSLS, KC_HOME, \
+        KC_CAPS,         KC_A,          KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,         KC_QUOT,                   KC_ENT,  KC_PGUP, \
+        LSFT_T(KC_LCBR), KC_Z,          KC_X,     KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,         RSFT_T(KC_RCBR),           KC_UP,   KC_PGDN, \
+        KC_LCTL,         KC_LALT,KC_LGUI,                             KC_SPC,                            KC_RALT, TH_WM,            KC_LEFT, KC_DOWN, KC_RGHT  \
     ),
-    //TODO Make a Mac default layer
     [_LIGHTS_MEDIA] = LAYOUT_65_ansi_blocker(
         _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, KC_MUTE, \
         _______, RGB_SPD, RGB_VAI, RGB_SPI, RGB_HUI, RGB_SAI, _______, U_T_AUTO,U_T_AGCR,_______, KC_PSCR, KC_SLCK, KC_PAUS, _______, KC_END,  \
@@ -125,58 +126,61 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
-struct key_color
-{
-    int h;
-    int last_hit;
+#ifdef _______
+#undef _______
+#define _______ {0, 0, 0}
+
+const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
+    [_WINDOWS] = {
+        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
+        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
+        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN  ,           CYAN,    CYAN,
+        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN  ,           CYAN,    CYAN,
+        CYAN,    CYAN,    CYAN  ,                             CYAN  ,                             CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
+        //UnderGlow
+        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
+        CYAN,                                                                                                                         CYAN,
+        CYAN,                                                                                                                         CYAN,
+        CYAN,                                                                                                                         CYAN,
+        CYAN,                                                                                                                         CYAN,
+        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN
+        },
+    [_MAC] = {
+        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
+        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
+        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE ,           AZURE,   AZURE,
+        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE ,           AZURE,   AZURE,
+        AZURE,   AZURE,   AZURE ,                             AZURE ,                             AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
+        //UnderGlow
+        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
+        AZURE,                                                                                                                        AZURE,
+        AZURE,                                                                                                                        AZURE,
+        AZURE,                                                                                                                        AZURE,
+        AZURE,                                                                                                                        AZURE,
+        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE
+       },
+    [_LIGHTS_MEDIA] = {
+        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,
+        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,
+        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK  ,           PINK,    PINK,
+        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK  ,           PINK,    PINK,
+        PINK,    PINK,    PINK  ,                             PINK  ,                             PINK,    PINK,    PINK,    PINK,    PINK,
+        //UnderGlow
+        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,
+        PINK,                                                                                                                         PINK,
+        PINK,                                                                                                                         PINK,
+        PINK,                                                                                                                         PINK,
+        PINK,                                                                                                                         PINK,
+        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK
+     },
 };
 
-static struct key_color color_map[DRIVER_LED_TOTAL];
+#undef _______
+#define _______ KC_TRNS
 
-void populate_map(void)
-{
-	for (int i = 0; i < DRIVER_LED_TOTAL; i++)
-	{
-	    int h = HSV_RED.h; // Do this based on layer/key instead of static?
-	    color_map[i].h = h;
-	    color_map[i].last_hit = 255;
-	}
-}
+#endif
 
-void backlight_effect_user(void)
-{
-    for (int i = 0; i < DRIVER_LED_TOTAL; i++)
-    {
-        uint16_t hit_time = g_key_hit[i];
-
-        hit_time *= 13; // This runs at approx 20Hz, multiply up to around 255
-        if (hit_time > 255)
-        {
-            hit_time = 255;
-        }
-        else
-        {
-            // This is currently redundant until extra logic to check layers/keys is added
-            if (color_map[i].last_hit > hit_time)
-            {
-                color_map[i].h = HSV_RED.h; // Do this based on layer/key instead of static
-            }
-        }
-        color_map[i].last_hit = hit_time;
-
-        uint8_t brightness = 255 - hit_time; // Fade away linearly based on time passed since keystroke
-
-        HSV hsv = { .h = color_map[i].h, .s = 255, .v = brightness };
-        RGB rgb = hsv_to_rgb(hsv);
-        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b); // Is this the right function to call for individual keys?
-    }
-}
-
-#define MODS_SHIFT  (get_mods() & MOD_BIT(KC_LSHIFT) || get_mods() & MOD_BIT(KC_RSHIFT))
-#define MODS_CTRL  (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTRL))
-#define MODS_ALT  (get_mods() & MOD_BIT(KC_LALT) || get_mods() & MOD_BIT(KC_RALT))
-
-uint16_t th_l1_timer;
+uint16_t th_wm_timer;
 
 static uint32_t idle_timer;
 static bool is_idle;
@@ -200,12 +204,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {    // Reset ti
     // Enable backlight back only when keyboard is idling (which implies the backlight was turned off previously)
     if (is_idle) {
         is_idle = false;
-
-        // Set back the original backlight level only if it is actually enabled globally
-        if (is_backlight_enabled()) {
-            // The current backlight level can be obtained with get_backlight_level
-            backlight_set(get_backlight_level());
-        }
+        disable_layer_color = false;
     }
 
     static uint32_t key_timer;
@@ -219,26 +218,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {    // Reset ti
         case U_T_AGCR:
             if (record->event.pressed && MODS_SHIFT && MODS_CTRL) {
                 TOGGLE_FLAG_AND_PRINT(usb_gcr_auto, "USB GCR auto mode");
-            }
-            return false;
-        case DBG_TOG:
-            if (record->event.pressed) {
-                TOGGLE_FLAG_AND_PRINT(debug_enable, "Debug mode");
-            }
-            return false;
-        case DBG_MTRX:
-            if (record->event.pressed) {
-                TOGGLE_FLAG_AND_PRINT(debug_matrix, "Debug matrix");
-            }
-            return false;
-        case DBG_KBD:
-            if (record->event.pressed) {
-                TOGGLE_FLAG_AND_PRINT(debug_keyboard, "Debug keyboard");
-            }
-            return false;
-        case DBG_MOU:
-            if (record->event.pressed) {
-                TOGGLE_FLAG_AND_PRINT(debug_mouse, "Debug mouse");
             }
             return false;
         case MD_BOOT:
@@ -276,18 +255,52 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {    // Reset ti
               }
             }
             return false;
-        case TH_L1:
+        case TH_WM:
             if(record->event.pressed) {
-                th_l1_timer = timer_read();
-                layer_on(1);
+                th_wm_timer = timer_read();
+                layer_on(_LIGHTS_MEDIA);
             } else {
-                layer_off(1);
-                if (timer_elapsed(th_l1_timer) < TAPPING_TERM) {
-                    layer_invert(2);
+                layer_off(_LIGHTS_MEDIA);
+                if (timer_elapsed(th_wm_timer) < TAPPING_TERM) {
+                    if (layer_state_is(_MAC)) {
+                        layer_move(_WINDOWS);
+                    } else {
+                        layer_move(_MAC);
+                    }
                 }
             }
             return true;
         default:
             return true; //Process all other keycodes normally
     }
+}
+
+void set_layer_color(int layer) {
+    for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
+        HSV hsv = {
+            .h = pgm_read_byte(&ledmap[layer][i][0]),
+            .s = pgm_read_byte(&ledmap[layer][i][1]),
+            .v = pgm_read_byte(&ledmap[layer][i][2]),
+        };
+        if (hsv.h || hsv.s || hsv.v) {
+            RGB rgb = hsv_to_rgb(hsv);
+            float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
+            rgb_matrix_set_color(i, f * rgb.r, f * rgb.g, f * rgb.b);
+        }
+        // TODO check what this even does...
+        // else if (layer == 1) {
+        //     // Only deactivate non-defined key LEDs at layers other than FN. Because at FN we have RGB adjustments and need to see them live.
+        //     // If the values are all false then it's a transparent key and deactivate LED at this layer
+        //     rgb_matrix_set_color(i, 0, 0, 0);
+        // }
+    }
+}
+
+void rgb_matrix_indicators_user(void) {
+    if (g_suspend_state || disable_layer_color ||
+        rgb_matrix_get_flags() == LED_FLAG_NONE ||
+        rgb_matrix_get_flags() == LED_FLAG_UNDERGLOW) {
+            return;
+        }
+    set_layer_color(get_highest_layer(layer_state));
 }
