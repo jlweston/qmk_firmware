@@ -16,6 +16,14 @@
 
 #include "keymap.h"
 
+// Layer declarations
+enum layers {
+    _WINDOWS = 0, //Default Windows layer
+    _MAC, //Default Mac layer
+    _GAMING, //Disable the Windows key for gaming
+    _LIGHTS_MEDIA, //All LED and media controls
+};
+
 #define MODS_SHIFT  (get_mods() & MOD_BIT(KC_LSHIFT) || get_mods() & MOD_BIT(KC_RSHIFT))
 #define MODS_CTRL  (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTRL))
 #define MODS_ALT  (get_mods() & MOD_BIT(KC_LALT) || get_mods() & MOD_BIT(KC_RALT))
@@ -31,13 +39,8 @@ enum alt_keycodes {
     TH_WM,                 // Toggle Windows and Mac base layer
 };
 
-// Layer declarations
-enum layers {
-    _WINDOWS = 0, //Default Windows layer
-    _MAC, //Default Mac layer
-    _LIGHTS_MEDIA, //All LED and media controls
-    _NO_GUI, //Disable the Windows key for gaming
-};
+#include "tap_dances.c"
+// #include "combos.c"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Windows
@@ -64,11 +67,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * └─────────┴─────────┴─────────┴───────────────────────────────────────────────┴─────────┴─────────┴──┴───────┴───────┴───────┘
      */
     [_WINDOWS] = LAYOUT_65_ansi_blocker(
-        GRAVE_ESC,       KC_1,    KC_2,            KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_MINS,          KC_EQL,  KC_BSPC, KC_DEL,  \
-        KC_TAB,          KC_Q,    KC_W,            KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,            KC_LBRC,          KC_RBRC, KC_BSLS, KC_HOME, \
-        KC_CAPS,         KC_A,    KC_S,            KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,         KC_QUOT,                   KC_ENT,  KC_PGUP, \
-        LSFT_T(KC_LCBR), KC_Z,    KC_X,            KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,         RSFT_T(KC_RCBR),           KC_UP,   KC_PGDN, \
-        KC_LCTL,         KC_LGUI, KC_LALT,                            KC_SPC,                            KC_RALT, TH_WM,           KC_LEFT, KC_DOWN, KC_RGHT  \
+        TD(TD_GRAVE),    TD_F1,   TD_F2,      TD_F3,   TD_F4,   TD_F5,   TD_F6,   TD_F7,   TD_F8,   TD_F9,   TD_F10,        TD_F11,           TD_F12,  KC_BSPC, KC_DEL,  \
+        MEH_T(KC_TAB),   KC_Q,    KC_W,       KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,          KC_LBRC,          KC_RBRC, KC_BSLS, KC_HOME, \
+        KC_CAPS,         KC_A,    KC_S,       KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,       KC_QUOT,                   KC_ENT,  KC_PGUP, \
+        LSFT_T(KC_LCBR), KC_Z,    KC_X,       KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,       RSFT_T(KC_RCBR),           KC_UP,   KC_PGDN, \
+        KC_LCTL,         KC_LGUI, KC_LALT,                      KC_SPC,                             KC_RALT, TD_LAYER,                        KC_LEFT, KC_DOWN, KC_RGHT  \
     ),
     /* Mac
      * ┌───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬───────┬────────────┬───────┐
@@ -94,11 +97,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * └─────────┴─────────┴─────────┴───────────────────────────────────────────────┴─────────┴─────────┴──┴───────┴───────┴───────┘
      */
     [_MAC] = LAYOUT_65_ansi_blocker(
-        GRAVE_ESC,       KC_1,          KC_2,     KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            KC_MINS,          KC_EQL,  KC_BSPC, KC_DEL,  \
-        KC_TAB,          KC_Q,          KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,            KC_LBRC,          KC_RBRC, KC_BSLS, KC_HOME, \
-        KC_CAPS,         KC_A,          KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,         KC_QUOT,                   KC_ENT,  KC_PGUP, \
-        LSFT_T(KC_LCBR), KC_Z,          KC_X,     KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,         RSFT_T(KC_RCBR),           KC_UP,   KC_PGDN, \
-        KC_LCTL,         KC_LALT,KC_LGUI,                             KC_SPC,                            KC_RALT, TH_WM,            KC_LEFT, KC_DOWN, KC_RGHT  \
+        TD(TD_GRAVE),    TD_F1,   TD_F2,    TD_F3,   TD_F4,   TD_F5,   TD_F6,   TD_F7,   TD_F8,   TD_F9,   TD_F10,          TD_F11,           TD_F12,  KC_BSPC, KC_DEL,  \
+        MEH_T(KC_TAB),   KC_Q,    KC_W,     KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,            KC_LBRC,          KC_RBRC, KC_BSLS, KC_HOME, \
+        KC_CAPS,         KC_A,    KC_S,     KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,         KC_QUOT,                   KC_ENT,  KC_PGUP, \
+        LSFT_T(KC_LCBR), KC_Z,    KC_X,     KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,         RSFT_T(KC_RCBR),           KC_UP,   KC_PGDN, \
+        KC_LCTL,         KC_LALT, KC_LGUI,                    KC_SPC,                             KC_RALT, TD_LAYER,                          KC_LEFT, KC_DOWN, KC_RGHT  \
+    ),
+   //Replaces Windows key with NOOP for gaming
+    [_GAMING] = LAYOUT_65_ansi_blocker(
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, \
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, \
+        _______, XXXXXXX, _______,                            _______,                            _______, _______, _______, _______, _______  \
     ),
     [_LIGHTS_MEDIA] = LAYOUT_65_ansi_blocker(
         _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, KC_MUTE, \
@@ -108,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            _______,                            _______, _______, KC_MPRV, KC_MPLY, KC_MNXT  \
     ),
     /*
-    [X] = LAYOUT(
+    [TEMPLATE] = LAYOUT(
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, \
@@ -116,14 +127,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            _______,                            _______, _______, _______, _______, _______  \
     ),
     */
-   //Replaces Windows key with NOOP for gaming
-    [_NO_GUI] = LAYOUT_65_ansi_blocker(
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, \
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, \
-        _______, XXXXXXX, _______,                            _______,                            _______, _______, _______, _______, _______  \
-    ),
 };
 
 #ifdef _______
@@ -132,11 +135,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
     [_WINDOWS] = {
-        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
-        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
-        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN  ,           CYAN,    CYAN,
-        CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN  ,           CYAN,    CYAN,
-        CYAN,    CYAN,    CYAN  ,                             CYAN  ,                             CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
+        CYAN,    AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   CYAN,    CYAN,
+        CYAN,    AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   CYAN,
+        CYAN,    AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,            CYAN,    CYAN,
+        CYAN,    AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   CYAN,             AZURE,   CYAN,
+        CYAN,    CYAN,    CYAN,                               AZURE,                              CYAN,    CYAN,    AZURE,   AZURE,   AZURE,
         //UnderGlow
         CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,
         CYAN,                                                                                                                         CYAN,
@@ -146,33 +149,63 @@ const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
         CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN,    CYAN
         },
     [_MAC] = {
-        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
-        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
-        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE ,           AZURE,   AZURE,
-        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE ,           AZURE,   AZURE,
-        AZURE,   AZURE,   AZURE ,                             AZURE ,                             AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
+        CHART,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   CHART,   CHART,
+        CHART,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   CHART,
+        CHART,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE ,           CHART,   CHART,
+        CHART,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   CHART ,           AZURE,   CHART,
+        CHART,   CHART,   CHART ,                             AZURE ,                             CHART,   CHART,   AZURE,   AZURE,   AZURE,
         //UnderGlow
-        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,
-        AZURE,                                                                                                                        AZURE,
-        AZURE,                                                                                                                        AZURE,
-        AZURE,                                                                                                                        AZURE,
-        AZURE,                                                                                                                        AZURE,
-        AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE,   AZURE
+        CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,
+        CHART,                                                                                                                        CHART,
+        CHART,                                                                                                                        CHART,
+        CHART,                                                                                                                        CHART,
+        CHART,                                                                                                                        CHART,
+        CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART,   CHART
        },
-    [_LIGHTS_MEDIA] = {
-        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,
-        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,
-        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK  ,           PINK,    PINK,
-        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK  ,           PINK,    PINK,
-        PINK,    PINK,    PINK  ,                             PINK  ,                             PINK,    PINK,    PINK,    PINK,    PINK,
+    [_GAMING] = {
+        RED,     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RED,     RED,
+        RED,     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RED,     RED,
+        RED,     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          RED,     RED,
+        RED,     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, RED,
+        RED,     RED,     RED,                                _______,                            RED,     RED,     _______, _______, _______,
         //UnderGlow
-        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,
-        PINK,                                                                                                                         PINK,
-        PINK,                                                                                                                         PINK,
-        PINK,                                                                                                                         PINK,
-        PINK,                                                                                                                         PINK,
-        PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK
+        RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,
+        RED,                                                                                                                          RED,
+        RED,                                                                                                                          RED,
+        RED,                                                                                                                          RED,
+        RED,                                                                                                                          RED,
+        RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED,     RED
+         },
+    [_LIGHTS_MEDIA] = {
+        _______, PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    _______, _______,
+        _______, PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    _______,
+        _______, PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK  ,           _______, _______,
+        _______, PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    PINK,    _______,          PINK,    _______,
+        _______, _______, _______,                            PINK,                               _______, _______, PINK,    PINK,    PINK,
+        //UnderGlow
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+        _______,                                                                                                                      _______,
+        _______,                                                                                                                      _______,
+        _______,                                                                                                                      _______,
+        _______,                                                                                                                      _______,
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
      },
+     /*
+    [TEMPLATE] = {
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,
+        _______, _______, _______,                            _______,                            _______, _______, _______, _______, _______,
+        //UnderGlow
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+        _______,                                                                                                                      _______,
+        _______,                                                                                                                      _______,
+        _______,                                                                                                                      _______,
+        _______,                                                                                                                      _______,
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+     },
+     */
 };
 
 #undef _______
@@ -275,25 +308,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {    // Reset ti
     }
 }
 
-void set_layer_color(int layer) {
+uint32_t set_layer_color(int layer) {
     for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
         HSV hsv = {
             .h = pgm_read_byte(&ledmap[layer][i][0]),
             .s = pgm_read_byte(&ledmap[layer][i][1]),
             .v = pgm_read_byte(&ledmap[layer][i][2]),
         };
-        if (hsv.h || hsv.s || hsv.v) {
+
+        // if (HAS_ANY_FLAGS(g_led_config.flags[i], LED_FLAG_MODIFIER)) {
+        //     // Use this to set a secondary colour for special keys?
+        //     rgb_matrix_set_color(i, 0, 0, 0);
+        // } else
+        if (i == 30 && host_keyboard_led_state().caps_lock) {
+            rgb_matrix_set_color(30, 255, 0, 0); // Todo make brightness variable, use theme colour?
+        } else if (hsv.h || hsv.s || hsv.v) {
             RGB rgb = hsv_to_rgb(hsv);
             float f = (float)rgb_matrix_config.hsv.v / UINT8_MAX;
             rgb_matrix_set_color(i, f * rgb.r, f * rgb.g, f * rgb.b);
         }
-        // TODO check what this even does...
-        // else if (layer == 1) {
-        //     // Only deactivate non-defined key LEDs at layers other than FN. Because at FN we have RGB adjustments and need to see them live.
-        //     // If the values are all false then it's a transparent key and deactivate LED at this layer
-        //     rgb_matrix_set_color(i, 0, 0, 0);
-        // }
     }
+    return 0;
 }
 
 void rgb_matrix_indicators_user(void) {
@@ -303,4 +338,9 @@ void rgb_matrix_indicators_user(void) {
             return;
         }
     set_layer_color(get_highest_layer(layer_state));
+}
+
+uint32_t layer_state_set_user(uint32_t state) {
+    set_layer_color(get_highest_layer(layer_state));
+    return state;
 }

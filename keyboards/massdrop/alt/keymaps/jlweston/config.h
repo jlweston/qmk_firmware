@@ -1,8 +1,15 @@
 #pragma once
 
+// Make sure this matches the actual count
+#define COMBO_COUNT 1
+
 #define FORCE_NKRO
 
-#define AUTO_SHIFT_TIMEOUT 175
+// Tap dance timeout
+#define TAPPING_TERM 200
+#define PERMISSIVE_HOLD
+
+#define AUTO_SHIFT_TIMEOUT 150
 #define NO_AUTO_SHIFT_SPECIAL
 
 // Backlight idle timeout in seconds
